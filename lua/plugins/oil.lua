@@ -54,6 +54,37 @@ vim.api.nvim_create_user_command("CopyOilContents", function(opts)
   copy_selected_files_contents(opts.line1, opts.line2)
 end, { range = true })
 
+-- Store marked directories
+local marked_directories = {}
+
+-- Function to mark current oil directory
+local function mark_oil_directory(mark)
+  local oil = require("oil")
+  local current_dir = oil.get_current_dir(0)
+
+  if not current_dir or current_dir == "" then
+    vim.notify("Not in an Oil buffer", vim.log.levels.ERROR)
+    return
+  end
+
+  marked_directories[mark] = current_dir
+  vim.notify("Marked directory '" .. mark .. "' as " .. current_dir, vim.log.levels.INFO)
+end
+
+-- Function to jump to marked directory
+local function goto_marked_directory(mark)
+  local oil = require("oil")
+  local dir = marked_directories[mark]
+
+  if not dir then
+    vim.notify("No directory marked as '" .. mark .. "'", vim.log.levels.ERROR)
+    return
+  end
+
+  -- Open the marked directory using Oil
+  oil.open(dir)
+end
+
 -- Visual mode mapping using mode "x" (for visual selections).
 vim.keymap.set("x", "<leader>cy", ":CopyOilContents<CR>", { desc = "Copy selected file contents" })
 -- Normal mode mapping to open Oil (parent directory)
@@ -69,4 +100,41 @@ return {
   },
   -- Optional dependencies
   dependencies = { { "echasnovski/mini.icons", opts = {} } },
+  config = function(_, opts)
+    local oil = require("oil")
+    oil.setup(opts)
+
+    -- Set up key mappings for marking and jumping to directories
+    -- These use Neovim's built-in mark functionality but store directory paths instead
+
+    -- Create autocommands that only apply to Oil buffers
+    vim.api.nvim_create_autocmd("FileType", {
+      pattern = "oil",
+      callback = function(ev)
+        -- Mark current directory with m{mark}
+        vim.keymap.set("n", "m", function()
+          -- Get the next character pressed
+          local ok, char = pcall(function()
+            return vim.fn.getcharstr()
+          end)
+
+          if ok and char and #char == 1 then
+            mark_oil_directory(char)
+          end
+        end, { buffer = ev.buf, desc = "Mark Oil directory" })
+
+        -- Jump to marked directory with '{mark}
+        vim.keymap.set("n", "'", function()
+          -- Get the next character pressed
+          local ok, char = pcall(function()
+            return vim.fn.getcharstr()
+          end)
+
+          if ok and char and #char == 1 then
+            goto_marked_directory(char)
+          end
+        end, { buffer = ev.buf, desc = "Go to marked Oil directory" })
+      end,
+    })
+  end,
 }
