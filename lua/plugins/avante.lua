@@ -4,38 +4,68 @@ return {
   version = false, -- Never set this value to "*"! Never!
   opts = {
     provider = "deepseek",
+    -- provider = "deepseek",
     -- deepseek = {
     --   endpoint = "https://api.deepseek.com/v1",
     --   model = "deepseek-chat",
     --   api_key_name = "DEEPSEEK_API_KEY",
     -- },
+    -- vendors = {
+    --   deepseek = {
+    --     __inherited_from = "openai",
+    --     api_key_name = "DEEPSEEK_API_KEY",
+    --     endpoint = "https://api.deepseek.com/v1",
+    --     model = "deepseek-chat",
+    --   },
+    --   --
+    --   -- provider = "copilot",
+    --   -- auto_suggestions_provider = "copilot",
+    --   -- copilot = {
+    --   --   model = "claude-3.7-sonnet",
+    --   -- },
+    --   -- openai = {
+    --   --   endpoint = "https://api.githubcopilot.com",
+    --   --   model = "", -- your desired model (or use gpt-4o, etc.)
+    --   --   timeout = 30000, -- timeout in milliseconds
+    --   --   temperature = 0, -- adjust if needed
+    --   --   max_tokens = 4096,
+    --   --   -- reasoning_effort = "high" -- only supported for reasoning models (o1, etc.)
+    --   -- },
+    -- },
+    auto_suggestions_provider = nil,
+    cursor_applying_provider = "groq",
+    -- provider = "copilot",
+    copilot = {
+      model = "claude-3.7-sonnet",
+      timeout = 30000, -- timeout in milliseconds
+      temperature = 0, -- adjust if needed
+      max_tokens = 8196,
+    },
+    -- deepseek = {
+    --   __inherited_from = "openai",
+    --   model = "deepseek-chat",
+    --   api_key_name = "DEEPSEEK_API_KEY",
+    --   endpoint = "https://api.deepseek.com/v1",
+    -- },
+    behaviour = {
+      enable_cursor_planning_mode = true,
+    },
     vendors = {
+
       deepseek = {
         __inherited_from = "openai",
         api_key_name = "DEEPSEEK_API_KEY",
         endpoint = "https://api.deepseek.com/v1",
         model = "deepseek-chat",
       },
-      --
-      -- provider = "copilot",
-      -- auto_suggestions_provider = "copilot",
-      -- copilot = {
-      --   model = "claude-3.7-sonnet",
-      -- },
-      -- openai = {
-      --   endpoint = "https://api.githubcopilot.com",
-      --   model = "", -- your desired model (or use gpt-4o, etc.)
-      --   timeout = 30000, -- timeout in milliseconds
-      --   temperature = 0, -- adjust if needed
-      --   max_tokens = 4096,
-      --   -- reasoning_effort = "high" -- only supported for reasoning models (o1, etc.)
-      -- },
+      groq = {
+        __inherited_from = "openai",
+        api_key_name = "GROQ_API_KEY",
+        endpoint = "https://api.groq.com/openai/v1/",
+        model = "llama-3.3-70b-versatile",
+        max_completion_tokens = 32768,
+      },
     },
-    behaviour = {
-
-      auto_apply_diff_after_generation = true,
-    },
-
     -- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
     build = "make",
     -- build = "powershell -ExecutionPolicy Bypass -File Build.ps1 -BuildFromSource false" -- for windows

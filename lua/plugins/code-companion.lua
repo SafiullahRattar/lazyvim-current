@@ -22,6 +22,17 @@ return {
           },
         })
       end,
+
+      copilotgpt = function()
+        return require("codecompanion.adapters").extend("copilot", {
+          name = "copilotgpt",
+          schema = {
+            model = {
+              default = "gpt-4.1",
+            },
+          },
+        })
+      end,
       deepseek = function()
         return require("codecompanion.adapters").extend("deepseek", {
           schema = {
@@ -43,6 +54,7 @@ return {
           },
         })
       end,
+
       -- Add configurations for other adapters here
       -- claudeapi = function() ... end,
       -- gemini = function() ... end,
